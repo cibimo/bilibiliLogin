@@ -52,7 +52,7 @@ while True:
 print(f"登录成功, 有效期至{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + int(loginData['expires_in'])))}")
 
 saveInfo = {
-    'update_time':int(time.time()*1000+0.5),
+    'update_time':int(time.time()+0.5),
     'token_info':loginData['token_info'],
     'cookie_info':loginData['cookie_info']
 }
