@@ -11,7 +11,7 @@ def tvsign(params, appkey='4409e2ce8ffd12b8', appsec='59b43e04ad6965f34319062b47
     return params
 
 # 获取二维码
-loginInfo = requests.post('http://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code',params=tvsign({
+loginInfo = requests.post('https://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code',params=tvsign({
     'local_id':'0',
     'ts':int(time.time())
 })).json()
@@ -20,7 +20,7 @@ loginInfo = requests.post('http://passport.bilibili.com/x/passport-tv-login/qrco
 qrcode_terminal.draw(loginInfo['data']['url'])
 
 while True:
-    pollInfo = requests.post('http://passport.bilibili.com/x/passport-tv-login/qrcode/poll',params=tvsign({
+    pollInfo = requests.post('https://passport.bilibili.com/x/passport-tv-login/qrcode/poll',params=tvsign({
         'auth_code':loginInfo['data']['auth_code'],
         'local_id':'0',
         'ts':int(time.time())
