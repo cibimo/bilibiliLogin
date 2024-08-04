@@ -1,9 +1,5 @@
 import os, time, requests, json, urllib, hashlib
 
-import sys
-sys.path.append('/root/project/push')
-from push import push_sendNotice
-
 def tvsign(params, appkey='4409e2ce8ffd12b8', appsec='59b43e04ad6965f34319062b478f83dd'):
     '为请求参数进行 api 签名'
     params.update({'appkey': appkey})
@@ -28,10 +24,6 @@ try:
     rsp_data = rsp_data.json()
 except:
     print('解析失败')
-    push_sendNotice(
-        'biliLogin',
-        '解析失败'
-    )
     raise
 
 
@@ -47,14 +39,6 @@ if rsp_data['code'] == 0:
         f.write(json.dumps(saveInfo,ensure_ascii=False,separators=(',',':')))
         f.close()
         
-    push_sendNotice(
-        'biliLogin',
-        f"UID:{rsp_data['data']['token_info']['mid']} 登录状态刷新成功, 有效期至{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(rsp_data['ts'] + int(rsp_data['data']['token_info']['expires_in'])))}",
-    )
 else:
     print('运行失败')
-    push_sendNotice(
-        'biliLogin',
-        '运行失败'
-    )
     raise
