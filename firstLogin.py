@@ -14,7 +14,9 @@ def tvsign(params, appkey='4409e2ce8ffd12b8', appsec='59b43e04ad6965f34319062b47
 loginInfo = requests.post('https://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code',params=tvsign({
     'local_id':'0',
     'ts':int(time.time())
-})).json()
+}),headers={
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+}).json()
 
 # 生成二维码
 qrcode_terminal.draw(loginInfo['data']['url'])
@@ -24,7 +26,9 @@ while True:
         'auth_code':loginInfo['data']['auth_code'],
         'local_id':'0',
         'ts':int(time.time())
-    })).json()
+    }),headers={
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+    }).json()
     
     if pollInfo['code'] == 0:
         loginData = pollInfo['data']
@@ -52,7 +56,7 @@ while True:
 print(f"登录成功, 有效期至{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + int(loginData['expires_in'])))}")
 
 saveInfo = {
-    'update_time':int(time.time()+0.5),
+    'update_time':int(time.time()*1000+0.5),
     'token_info':loginData['token_info'],
     'cookie_info':loginData['cookie_info']
 }
