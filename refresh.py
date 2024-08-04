@@ -1,5 +1,9 @@
 import os, time, requests, json, urllib, hashlib
 
+import sys
+sys.path.append('/root/project/push')
+from push import push_sendNotice
+
 def tvsign(params, appkey='4409e2ce8ffd12b8', appsec='59b43e04ad6965f34319062b478f83dd'):
     '为请求参数进行 api 签名'
     params.update({'appkey': appkey})
@@ -15,7 +19,20 @@ rsp_data = requests.post("https://passport.bilibili.com/api/v2/oauth2/refresh_to
     'access_key':saveInfo['token_info']['access_token'], 
     'refresh_token':saveInfo['token_info']['refresh_token'],
     'ts':int(time.time())
-}),headers={'Content-type': "application/x-www-form-urlencoded"}).json()
+}),headers={
+    "content-type": "application/x-www-form-urlencoded", 
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+})
+
+try:
+    rsp_data = rsp_data.json()
+except:
+    print('解析失败')
+    push_sendNotice(
+        'biliLogin',
+        '解析失败'
+    )
+    raise
 
 
 if rsp_data['code'] == 0:
@@ -29,5 +46,15 @@ if rsp_data['code'] == 0:
     with open('info.json','w+') as f:
         f.write(json.dumps(saveInfo,ensure_ascii=False,separators=(',',':')))
         f.close()
+        
+    push_sendNotice(
+        'biliLogin',
+        f"UID:{rsp_data['data']['token_info']['mid']} 登录状态刷新成功, 有效期至{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(rsp_data['ts'] + int(rsp_data['data']['token_info']['expires_in'])))}",
+    )
 else:
-    print('刷新失败')
+    print('运行失败')
+    push_sendNotice(
+        'biliLogin',
+        '运行失败'
+    )
+    raise
